@@ -38,12 +38,14 @@ app.get("/v1", async (req, resp) => {
           const image = $(this).find("a > img").attr("src")
           const priceCurrent = $(this).find(".price > ins ").text().trim()
           const priceSale = $(this).find(".price > del ").text().trim()
+          const detail = $(this).find("a").attr("href")
 
           thumbnails.push({
             title,
             image,
             priceCurrent,
-            priceSale
+            priceSale,
+            detail
           })
         });
 
@@ -52,6 +54,8 @@ app.get("/v1", async (req, resp) => {
 
           resp.status(200).json(thumbnails.slice(0,limit));
         }
+
+        resp.status(200).json(thumbnails);
 
       })
       .catch((error) => {
