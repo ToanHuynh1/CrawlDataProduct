@@ -42,19 +42,23 @@ app.get("/v1", async (req, resp) => {
           const detail = $(this).find("a").attr("href")
           const url = "https://data-product.onrender.com/v1/" + detail.split("https://muachung365.vn/")[1]
 
-          thumbnails.push({
-            title,
-            image,
-            priceCurrent,
-            priceSale,
-            detail,
-            url
-          })
+          if (image)
+          {
+            thumbnails.push({
+              title,
+              image,
+              priceCurrent,
+              priceSale,
+              detail,
+              url
+            })
+          }
+
+     
         });
 
         if (limit && limit > 0)
         {
-
           resp.status(200).json(thumbnails.slice(0,limit));
         }
 
