@@ -81,8 +81,8 @@ app.get("/v1/:nameproduct", (req,resp) => {
 
   let fullImage = []
   let title = ''
+  let infor = ''
   let detailProduct = []
-
 
   try {
     axios(url).then((res) => {
@@ -92,6 +92,10 @@ app.get("/v1/:nameproduct", (req,resp) => {
         $('.product-detail__title', html).each(function(){
           title = $(this).text().trim()
         }) 
+        
+        $('.product-detail__top', html).each(function() {
+          infor = $(this).find('.product-detail__content > p').text().trim()
+        })
 
         $('.thumb', html).each(function(i,e){
           const gallery = $(e).find("img").attr("src");
@@ -99,7 +103,8 @@ app.get("/v1/:nameproduct", (req,resp) => {
         })
           detailProduct.push({
             title,
-            fullImage
+            fullImage,
+            infor
         })
   
 
