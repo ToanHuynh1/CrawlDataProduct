@@ -93,14 +93,13 @@ app.get('/extra', async (req, res) => {
 
       let electronicData = await page.evaluate(() => {
         let products = [];
-        let product_wrapper = document.querySelectorAll('.job');
+        let product_wrapper = document.querySelectorAll('.sc-aead75fd-0.fdwkBs');
 
-        product_wrapper.forEach(async (product) => {
+        product_wrapper.forEach((product) => {
           let dataJson = {};
           try {
-            
             dataJson.title = product.querySelector('.job__info-subTitle').innerText;
-            dataJson.img = await product.querySelector('div.job__image > div > span > img').src;    
+            dataJson.img = product.querySelector('.image > span > img').src ? product.querySelector('.image > span > img').src : null;    
             dataJson.salary = product.querySelector('.salary').innerText
             dataJson.position = product.querySelector('.job__info-text').innerText
             dataJson.infor = product.querySelector('.job__info-text > span').innerText
@@ -139,7 +138,7 @@ app.get('/extra/:id', async (req, res) => {
 
       let electronicData = await page.evaluate(() => {
         let products = [];
-        let product_wrapper = document.querySelectorAll('.page-job-detail ');
+        let product_wrapper = document.querySelectorAll('.page-job-detail');
 
         product_wrapper.forEach(async (product) => {
           let dataJson = {};
@@ -154,7 +153,11 @@ app.get('/extra/:id', async (req, res) => {
                 benifit.push(be.innerText)
             })
             dataJson.benifit = benifit
-            dataJson.requirements = product.querySelector('.requirements').innerText.trim().replace('\n', '');
+            let requirements = product.querySelector('.requirements').innerText.trim();
+            requirements = requirements.replace(/\n/g, '');
+            const sentences = requirements.split(/•/);
+            const filteredRequirements = sentences.filter((requirement) => requirement.trim() !== "");
+            dataJson.requirements = filteredRequirements;
             product.querySelectorAll('.location-name').forEach((be) => {
                 location.push(be.innerText.trim())
             })
@@ -170,7 +173,6 @@ app.get('/extra/:id', async (req, res) => {
       });
   
       await browser.close();
-      
       res.json(electronicData); 
     } catch (error) {
       console.error(error);
@@ -178,6 +180,12 @@ app.get('/extra/:id', async (req, res) => {
     }
 });
 
+
+const Crawling = () => {
+    // all crawl
+
+
+}
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
