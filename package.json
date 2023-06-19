@@ -14,9 +14,11 @@
     "body-parser": "^1.20.2",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
+    "crawler": "^1.4.0",
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "node-fetch": "^3.3.1",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "puppeteer": "^20.7.2"
   }
 }
