@@ -34,6 +34,6 @@ function downloadImage(url, folder) {
   });
 }
 
-const imageUrl = 'https://www.vietnamworks.com/_next/image?url=https%3A%2F%2Fimages.vietnamworks.com%2Fpictureofcompany%2F05%2F11127516.png&w=256&q=75';
+const imageUrl = 'https://www.google.com/url?sa=i&url=https%3A%2F%2Flifestyle.zingnews.vn%2F10-buc-anh-dep-nhat-giai-nhiep-anh-thien-van-cua-nam-post1237834.html&psig=AOvVaw0694E9RttgUnbFxtWS0rH6&ust=1687418314650000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCJDAnqHp0_8CFQAAAAAdAAAAABAD';
 const downloadFolder = 'images';
 downloadImage(imageUrl, downloadFolder);
