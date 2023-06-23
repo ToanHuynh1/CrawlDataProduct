@@ -516,9 +516,7 @@ app.get('/full_url', async (req, res) => {
     const browser = await puppeteer.launch({ ignoreHTTPSErrors: true, executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
     const page = await browser.newPage();
     let hrefsHotJob = []
-    let dataDetailJob = []
 
-    
     await page.goto(electronicUrl);
 
     getLink = async () => {
@@ -529,6 +527,7 @@ app.get('/full_url', async (req, res) => {
       {
 
         try {
+
           await page.goto(`https://www.vietnamworks.com/viec-lam-tot-nhat?page=${currentPage-1}`, { waitUntil: 'networkidle2' });
           await page.waitForSelector('.job__info > a')
 
@@ -566,34 +565,86 @@ app.get('/full_url', async (req, res) => {
 
       let newPage = await browser.newPage();
       await newPage.goto(`${hrefsHotJob[i]}`, { waitUntil: 'networkidle2' });
+ 
+
+      let getInforDetail = async () => {
+        let data = []
+  
+        const titles = await newPage.$$eval('.content-label', (elements) =>
+          elements.map((element) => element.textContent.trim())
+        );
+
+        const names = await newPage.$$eval('span.content', (elements) =>
+        elements.map((element) => element.textContent.trim())
+        );
+
+        const benifit = await newPage.$$eval('.benefit-name', as => as.map(a => a.innerText));
+        const description = await newPage.$$eval('.description',as => as.map(a => a.innerText));
+        const requirements = await newPage.$$eval('.requirements', as => as.map(a => a.innerText));
+        const location = await newPage.$$eval('.location-name', as => as.map(a => a.innerText));
+        const keys = await newPage.$$eval('span.job-tags__tag-name ', as => as.map(a => a.innerText));
+        const title =  await newPage.$eval('.job-title', as => as.innerText.trim());
+        const name =  await newPage.$eval('.name', as => as.innerText);
+        const company_location = await newPage.$eval('.company-location', as => as.innerText);
+        const salary = await newPage.$eval('.salary > strong', as => as.innerText);
+        let img = ''
+        try {
+          img = await newPage.$eval('.logo-wrapper > .track-event > img', as => as.src) ? await newPage.$eval('.logo-wrapper > .track-event > img', as => as.src) : '';
+        } catch (error) {
+          console.log(error);
+        }
    
-      const title =  await newPage.$eval('.job-title', as => as.innerText.trim());
-      const name =  await newPage.$eval('.name', as => as.innerText);
-      const company_location = await newPage.$eval('.company-location', as => as.innerText);
-      const salary = await newPage.$eval('.salary > strong', as => as.innerText);
-      // const img = await newPage.$eval('.track-event > img', as => as.src);
-      const benifit = await newPage.$$eval('.benefit-name', as => as.map(a => a.innerText));
-      const description = await newPage.$$eval('.description',as => as.map(a => a.innerText));
-      const requirements = await newPage.$$eval('.requirements', as => as.map(a => a.innerText));
-      const locaition = await newPage.$$eval('.location-name', as => as.map(a => a.innerText));
-      const keys = await newPage.$$eval('span.job-tags__tag-name ', as => as.map(a => a.innerText));
 
+        for (let i = 0; i < titles.length; i++) {
+          const item = {
+            title: titles[i],
+            name: names[i],
+          };
+          data.push(item);
+        }
 
-      dataDetailJob.push({
-        title,name, salary, benifit, description, requirements, company_location, locaition, keys
-      })
-
-      console.log(dataDetailJob);
-
-      // await newPage.close();
+        const keyValuePair = {
+          name,
+          company_location, 
+          salary,
+          keys: keys,
+          benifit,
+          description: description,
+          location:location,
+          requirements: requirements,
+          title:title,
+          img
+        };
       
+        data.push(keyValuePair); 
+      
+  
+        let isCheck = false;
+        try {
+          await page.$eval('.presentation', (a) => a.textContent);
+          isCheck = true;
+        } catch (err) {
+          isCheck = false;
+        }
+  
+        if (isCheck) {
+          await page.click('.presentation');
+          return getInforDetail();
+        }
+        return data;
+      };
+      
+      const endData = await getInforDetail();
+
+      console.log(endData);
+
     }
 
     
-    fs.writeFile('detail_company.json', JSON.stringify(dataDetailJob), (err) => {
-      if (err) throw err;
-      console.log('Save success');
-    });
+    // fs.writeFile('detail_company.json', JSON.stringify(dataDetailJob), (err) => {
+    //   if (err) throw err;
+    //   console.log('Save success');
+    // });
 
     await page.close();
 	  await browser.close()
